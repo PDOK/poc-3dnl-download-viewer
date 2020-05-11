@@ -1,0 +1,35 @@
+
+#container, html, body {
+    height: 100%;
+    margin: 0;
+    width: 100%;
+}
+
+body{
+    margin:0px;
+    background-color: white;
+}
+
+#map { width: 70%; height:100vh; }
+
+#sidebar { 
+width: 30%;
+padding:10px;
+max-height:100vh;
+overflow-y: scroll;
+}
+
+#container{
+    display: flex;
+    flex-direction: row;
+}
+
+#serviceswitcher{
+    width: 100%;
+}
+
+#sidebar select,button{
+    margin:.1em;
+}
+
+/*# sourceMappingURL=/3D-download-poc.9ad09f98.css.map */
