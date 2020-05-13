@@ -18,7 +18,7 @@ import Select from 'ol/interaction/Select'
 import 'ol/ol.css'
 import 'ol-layerswitcher/src/ol-layerswitcher.css'
 
-
+import bladIndexAhn from './ahn3_bladindex.json'
 import bladIndex2000 from './bladindex_2000_clipped.json'
 import bladIndex5000 from './bladindex_5000_clipped.json'
 
@@ -62,7 +62,14 @@ function getWmtsLayer(layername) {
 
 const brtWmtsLayer = getWmtsLayer('brtachtergrondkaart')
 
-
+const vectorLayerAhn = new VectorLayer({
+  title: 'bladindex AHN3',
+  visible: false,
+  source: new VectorSource({
+    features: (new GeoJSON()).readFeatures(bladIndexAhn),
+    projection: rdProjection
+  })
+});
 
 
 const vectorLayer2000 = new VectorLayer({
@@ -91,7 +98,7 @@ var layerSwitcher = new LayerSwitcher({
   groupSelectStyle: 'none' // Can be 'children' [default], 'group' or 'none'
 })
 
-
+// bladindex_1000_clipped retrieved with fetch, parcel running out of memory when including file as import
 fetch('./bladindex_1000_clipped.json')
   .then(response => response.json())
   .then(function (data) {
@@ -107,6 +114,7 @@ fetch('./bladindex_1000_clipped.json')
     const map = new Map({
       layers: [
         brtWmtsLayer,
+        vectorLayerAhn,
         vectorLayer1000,
         vectorLayer2000,
         vectorLayer5000,
@@ -135,9 +143,15 @@ fetch('./bladindex_1000_clipped.json')
     var select = new Select()
     map.addInteraction(select);
     select.on('select', function (e) {
-      if (e.target.getFeatures().getLength() > 0) {
-        let ft = e.target.getFeatures().getArray()[0]
-        let bladnr = ft.getProperties()['id']
+      if (e.selected.length > 0) {
+        let featureSelected = e.selected[0];
+        let layer = select.getLayer(featureSelected);
+        let layerTitle = layer.get("title")
+        let attribute = 'id'
+        if (layerTitle === 'bladindex AHN3'){
+          attribute = 'bladnr'
+        }
+        let bladnr = featureSelected.getProperties()[attribute]
         document.getElementById('status').innerHTML = `bladnummer: ${bladnr}`
       } else {
         document.getElementById('status').innerHTML = ''
